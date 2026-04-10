@@ -1,7 +1,5 @@
-rootProject.name = "Reclaim"
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             mavenContent {
@@ -13,9 +11,6 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
-}
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
 }
 
 dependencyResolutionManagement {
@@ -31,4 +26,23 @@ dependencyResolutionManagement {
     }
 }
 
+rootProject.name = "Reclaim"
+
+// ── App shell ─────────────────────────────────────────────────────────────────
 include(":composeApp")
+
+// ── Core modules ──────────────────────────────────────────────────────────────
+include(":core:core-domain")
+include(":core:core-data")
+include(":core:core-ui")
+include(":core:core-notifications")
+
+// ── Feature modules ───────────────────────────────────────────────────────────
+include(":feature:feature-auth")
+include(":feature:feature-onboarding")
+include(":feature:feature-dashboard")
+include(":feature:feature-addiction")
+include(":feature:feature-checkin")
+include(":feature:feature-progress")
+include(":feature:feature-sos")
+include(":feature:feature-settings")
