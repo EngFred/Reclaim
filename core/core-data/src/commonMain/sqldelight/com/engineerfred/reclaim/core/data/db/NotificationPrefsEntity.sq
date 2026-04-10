@@ -1,0 +1,26 @@
+CREATE TABLE notificationPrefsEntity (
+    userId                    TEXT    NOT NULL PRIMARY KEY,
+    morningReminderEnabled    INTEGER NOT NULL DEFAULT 1,
+    morningReminderHour       INTEGER NOT NULL DEFAULT 7,
+    eveningReminderEnabled    INTEGER NOT NULL DEFAULT 1,
+    eveningReminderHour       INTEGER NOT NULL DEFAULT 21,
+    highRiskAlertsEnabled     INTEGER NOT NULL DEFAULT 1,
+    milestoneAlertsEnabled    INTEGER NOT NULL DEFAULT 1,
+    postRelapseMessagesEnabled INTEGER NOT NULL DEFAULT 1,
+    weeklyProgressEnabled     INTEGER NOT NULL DEFAULT 1
+);
+
+insertOrReplacePrefs:
+INSERT OR REPLACE INTO notificationPrefsEntity(
+    userId,
+    morningReminderEnabled, morningReminderHour,
+    eveningReminderEnabled, eveningReminderHour,
+    highRiskAlertsEnabled, milestoneAlertsEnabled,
+    postRelapseMessagesEnabled, weeklyProgressEnabled
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+selectPrefsForUser:
+SELECT * FROM notificationPrefsEntity WHERE userId = ?;
+
+deletePrefsForUser:
+DELETE FROM notificationPrefsEntity WHERE userId = ?;

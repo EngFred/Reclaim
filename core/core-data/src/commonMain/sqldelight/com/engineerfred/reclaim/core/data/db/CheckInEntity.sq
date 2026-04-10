@@ -1,0 +1,45 @@
+CREATE TABLE checkInEntity (
+    id          TEXT    NOT NULL PRIMARY KEY,
+    addictionId TEXT    NOT NULL,
+    userId      TEXT    NOT NULL,
+    date        INTEGER NOT NULL,
+    status      TEXT    NOT NULL,
+    triggerNote TEXT,
+    isSynced    INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX idx_checkIn_addictionId ON checkInEntity(addictionId);
+CREATE INDEX idx_checkIn_userId      ON checkInEntity(userId);
+CREATE INDEX idx_checkIn_date        ON checkInEntity(date);
+
+insertOrReplaceCheckIn:
+INSERT OR REPLACE INTO checkInEntity(
+    id, addictionId, userId, date, status, triggerNote, isSynced
+) VALUES (?, ?, ?, ?, ?, ?, ?);
+
+selectCheckInsForAddiction:
+SELECT * FROM checkInEntity
+WHERE addictionId = ?
+ORDER BY date DESC;
+
+selectAllCheckInsForUser:
+SELECT * FROM checkInEntity
+WHERE userId = ?
+ORDER BY date DESC;
+
+selectCheckInForDate:
+SELECT * FROM checkInEntity
+WHERE addictionId = ? AND date = ?
+LIMIT 1;
+
+selectUnsyncedCheckIns:
+SELECT * FROM checkInEntity WHERE isSynced = 0;
+
+markCheckInAsSynced:
+UPDATE checkInEntity SET isSynced = 1 WHERE id = ?;
+
+deleteAllCheckInsForUser:
+DELETE FROM checkInEntity WHERE userId = ?;
+
+deleteCheckInById:
+DELETE FROM checkInEntity WHERE id = ?;

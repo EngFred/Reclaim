@@ -1,0 +1,43 @@
+CREATE TABLE addictionEntity (
+    id           TEXT    NOT NULL PRIMARY KEY,
+    userId       TEXT    NOT NULL,
+    category     TEXT    NOT NULL,
+    type         TEXT    NOT NULL,
+    displayName  TEXT    NOT NULL,
+    startDate    INTEGER NOT NULL,
+    isActive     INTEGER NOT NULL DEFAULT 1,
+    whyIQuitNote TEXT,
+    isSynced     INTEGER NOT NULL DEFAULT 0
+);
+
+insertOrReplaceAddiction:
+INSERT OR REPLACE INTO addictionEntity(
+    id, userId, category, type, displayName, startDate, isActive, whyIQuitNote, isSynced
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+selectActiveAddictions:
+SELECT * FROM addictionEntity WHERE userId = ? AND isActive = 1;
+
+selectAddictionById:
+SELECT * FROM addictionEntity WHERE id = ?;
+
+selectAllAddictions:
+SELECT * FROM addictionEntity WHERE userId = ?;
+
+selectUnsyncedAddictions:
+SELECT * FROM addictionEntity WHERE isSynced = 0;
+
+updateAddictionIsActive:
+UPDATE addictionEntity SET isActive = ? WHERE id = ?;
+
+updateWhyIQuitNote:
+UPDATE addictionEntity SET whyIQuitNote = ? WHERE id = ?;
+
+markAddictionAsSynced:
+UPDATE addictionEntity SET isSynced = 1 WHERE id = ?;
+
+deleteAllAddictionsForUser:
+DELETE FROM addictionEntity WHERE userId = ?;
+
+deleteAddictionById:
+DELETE FROM addictionEntity WHERE id = ?;

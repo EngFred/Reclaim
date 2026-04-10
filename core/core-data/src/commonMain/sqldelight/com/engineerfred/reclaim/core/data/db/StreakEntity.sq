@@ -1,0 +1,17 @@
+CREATE TABLE streakEntity (
+    addictionId TEXT NOT NULL PRIMARY KEY,
+    current     INTEGER NOT NULL DEFAULT 0,
+    longest     INTEGER NOT NULL DEFAULT 0,
+    totalDays   INTEGER NOT NULL DEFAULT 0,
+    successRate REAL    NOT NULL DEFAULT 0.0
+);
+
+insertOrReplaceStreak:
+INSERT OR REPLACE INTO streakEntity(addictionId, current, longest, totalDays, successRate)
+VALUES (?, ?, ?, ?, ?);
+
+selectStreakForAddiction:
+SELECT * FROM streakEntity WHERE addictionId = ?;
+
+deleteStreakForAddiction:
+DELETE FROM streakEntity WHERE addictionId = ?;
