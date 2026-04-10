@@ -7,9 +7,6 @@ import org.jetbrains.compose.ComposeExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-/**
- * Convention plugin for the Android application shell (composeApp).
- */
 class AndroidAppConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
@@ -32,8 +29,8 @@ class AndroidAppConventionPlugin : Plugin<Project> {
                     versionName   = "1.0"
                 }
                 compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_11
-                    targetCompatibility = JavaVersion.VERSION_11
+                    sourceCompatibility = JavaVersion.VERSION_17
+                    targetCompatibility = JavaVersion.VERSION_17
                 }
                 packaging {
                     resources {
@@ -47,7 +44,6 @@ class AndroidAppConventionPlugin : Plugin<Project> {
                 }
             }
 
-            // Get compose dependencies AFTER the compose plugin is applied
             val compose = extensions
                 .getByType(ComposeExtension::class.java)
                 .dependencies
@@ -59,7 +55,8 @@ class AndroidAppConventionPlugin : Plugin<Project> {
             extensions.configure<KotlinMultiplatformExtension> {
                 androidTarget {
                     compilerOptions {
-                        jvmTarget.set(JvmTarget.JVM_11)
+                        jvmTarget.set(JvmTarget.JVM_17)
+                        freeCompilerArgs.add("-Xexpect-actual-classes")
                     }
                 }
                 listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
@@ -77,13 +74,11 @@ class AndroidAppConventionPlugin : Plugin<Project> {
                         implementation(compose.ui)
                         implementation(compose.components.resources)
                         implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.10.3")
-
                         implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
                         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
                         implementation("io.insert-koin:koin-core:$koinVersion")
                         implementation("io.insert-koin:koin-compose:$koinVersion")
                     }
-
                     androidMain.dependencies {
                         implementation("androidx.activity:activity-compose:1.13.0")
                         implementation(compose.uiTooling)

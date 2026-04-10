@@ -6,11 +6,6 @@ import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-/**
- * Convention plugin for a pure KMP library module.
- * Used by: core-domain, core-data, core-notifications.
- * No Compose. Namespace is set per-module in each build.gradle.kts.
- */
 class KmpLibraryConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
@@ -26,15 +21,16 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                     minSdk = 24
                 }
                 compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_11
-                    targetCompatibility = JavaVersion.VERSION_11
+                    sourceCompatibility = JavaVersion.VERSION_17
+                    targetCompatibility = JavaVersion.VERSION_17
                 }
             }
 
             extensions.configure<KotlinMultiplatformExtension> {
                 androidTarget {
                     compilerOptions {
-                        jvmTarget.set(JvmTarget.JVM_11)
+                        jvmTarget.set(JvmTarget.JVM_17)
+                        freeCompilerArgs.add("-Xexpect-actual-classes")
                     }
                 }
                 iosArm64()
