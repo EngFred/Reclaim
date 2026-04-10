@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.androidApp)
+    alias(libs.plugins.googleServices)
 }
 
 kotlin {
