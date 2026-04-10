@@ -9,6 +9,9 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:core-domain"))
             implementation(project(":core:core-ui"))
+            implementation(project(":core:core-data"))
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.sqldelight.coroutines)
         }
     }
 }

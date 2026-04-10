@@ -9,6 +9,14 @@ import org.koin.core.context.startKoin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import com.engineerfred.reclaim.core.data.sync.SyncManager
+import com.engineerfred.reclaim.core.notifications.di.coreNotificationsModule
+import com.engineerfred.reclaim.feature.auth.di.authModule
+import com.engineerfred.reclaim.feature.checkin.di.checkInModule
+import com.engineerfred.reclaim.feature.dashboard.di.dashboardModule
+import com.engineerfred.reclaim.feature.onboarding.di.onboardingModule
+import com.engineerfred.reclaim.feature.progress.di.progressModule
+import com.engineerfred.reclaim.feature.settings.di.settingsModule
+import com.engineerfred.reclaim.feature.sos.di.sosModule
 
 class ReclaimApplication : Application(), KoinComponent {
     override fun onCreate() {
@@ -22,8 +30,15 @@ class ReclaimApplication : Application(), KoinComponent {
             androidContext(this@ReclaimApplication)
             modules(
                 coreDataModule,
-                platformDataModule
-                // feature modules added here as they are built
+                platformDataModule,
+                coreNotificationsModule,
+                authModule,
+                onboardingModule,
+                dashboardModule,
+                checkInModule,
+                progressModule,
+                sosModule,
+                settingsModule
             )
         }
 

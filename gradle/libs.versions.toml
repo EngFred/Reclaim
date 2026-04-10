@@ -25,6 +25,8 @@ coroutines              = "1.10.2"
 koin                    = "4.2.1"
 
 # Local DB
+materialIconsExtended = "1.7.3"
+navigationCompose = "2.9.2"
 sqldelight              = "2.3.2"
 
 # Firebase (GitLive KMP SDK — wraps both Android + iOS Firebase SDKs)
@@ -79,6 +81,8 @@ koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", ver
 koin-test             = { module = "io.insert-koin:koin-test",              version.ref = "koin" }
 
 # ── SQLDelight ───────────────────────────────────────────────────────────────
+material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 sqldelight-runtime           = { module = "app.cash.sqldelight:runtime",                   version.ref = "sqldelight" }
 sqldelight-coroutines        = { module = "app.cash.sqldelight:coroutines-extensions",     version.ref = "sqldelight" }
 sqldelight-android-driver    = { module = "app.cash.sqldelight:android-driver",            version.ref = "sqldelight" }

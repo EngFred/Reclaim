@@ -9,7 +9,10 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:core-domain"))
             implementation(project(":core:core-ui"))
+            implementation(project(":core:core-data")) // for FirebaseProvider
             implementation(libs.firebase.auth)
+            implementation(libs.material.icons.extended)
+            implementation(libs.koin.compose.viewmodel) // for koinViewModel()
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

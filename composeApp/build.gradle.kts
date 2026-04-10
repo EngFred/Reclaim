@@ -5,14 +5,22 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            // Add your project-specific dependencies here
+            implementation(project(":core:core-ui"))
+            implementation(project(":core:core-domain"))
+            implementation(project(":feature:feature-auth"))
+            implementation(project(":core:core-notifications"))
             implementation(project(":core:core-data"))
-
-            // You will likely need to add your feature modules here too
-            // so the app shell can navigate to them and wire up Koin!
-            // implementation(project(":feature:feature-auth"))
-            // implementation(project(":feature:feature-dashboard"))
-            // etc...
+            implementation(project(":feature:feature-onboarding"))
+            implementation(project(":feature:feature-dashboard"))
+            implementation(project(":feature:feature-addiction"))
+            implementation(project(":feature:feature-checkin"))
+            implementation(project(":feature:feature-progress"))
+            implementation(project(":feature:feature-sos"))
+            implementation(project(":feature:feature-settings"))
+            implementation(libs.androidx.lifecycle.viewmodelCompose)
+            implementation(libs.navigation.compose) // KMP Navigation
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.material.icons.extended)
         }
     }
 }

@@ -41,3 +41,6 @@ DELETE FROM addictionEntity WHERE userId = ?;
 
 deleteAddictionById:
 DELETE FROM addictionEntity WHERE id = ?;
+
+updateIsSynced:
+UPDATE addictionEntity SET isSynced = ? WHERE id = ?;
