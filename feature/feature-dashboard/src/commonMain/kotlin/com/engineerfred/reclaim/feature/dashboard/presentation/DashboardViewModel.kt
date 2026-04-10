@@ -7,6 +7,7 @@ import com.engineerfred.reclaim.feature.dashboard.domain.usecase.GetStreakForAdd
 import com.engineerfred.reclaim.feature.dashboard.domain.usecase.GetTodayGreetingUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map // <-- THIS IMPORT WAS MISSING
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -49,13 +51,15 @@ class DashboardViewModel(
                 _uiState.update { it.copy(isLoading = false, activeAddictions = emptyList()) }
                 flowOf(emptyList())
             } else {
-                // Combine every addiction with its live streak data
-                val streakFlows = addictions.map { addiction ->
+                // Explicitly define the list type so combine knows exactly what it's receiving
+                val streakFlows: List<Flow<ActiveAddictionItem>> = addictions.map { addiction ->
                     getStreakForAddictionUseCase(addiction.id).map { streak ->
                         ActiveAddictionItem(addiction, streak)
                     }
                 }
-                combine(streakFlows) { itemsArray ->
+
+                // Explicitly tell combine it's receiving an Array of ActiveAddictionItem
+                combine(streakFlows) { itemsArray: Array<ActiveAddictionItem> ->
                     itemsArray.toList().sortedByDescending { it.addiction.startDate }
                 }
             }
@@ -68,8 +72,6 @@ class DashboardViewModel(
             }
         }.launchIn(viewModelScope)
     }
-
-    // ── User Actions ──────────────────────────────────────────────────────────
 
     fun onCheckInClicked(addictionId: String) {
         viewModelScope.launch {
