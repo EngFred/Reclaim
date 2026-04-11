@@ -9,5 +9,8 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:core-domain"))
         }
+        androidMain.dependencies {
+            implementation(libs.androidx.core.ktx)
+        }
     }
 }

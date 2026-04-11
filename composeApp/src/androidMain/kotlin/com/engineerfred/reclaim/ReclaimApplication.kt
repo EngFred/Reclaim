@@ -10,6 +10,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import com.engineerfred.reclaim.core.data.sync.SyncManager
 import com.engineerfred.reclaim.core.notifications.di.coreNotificationsModule
+import com.engineerfred.reclaim.feature.addiction.di.addictionModule
 import com.engineerfred.reclaim.feature.auth.di.authModule
 import com.engineerfred.reclaim.feature.checkin.di.checkInModule
 import com.engineerfred.reclaim.feature.dashboard.di.dashboardModule
@@ -38,7 +39,8 @@ class ReclaimApplication : Application(), KoinComponent {
                 checkInModule,
                 progressModule,
                 sosModule,
-                settingsModule
+                settingsModule,
+                addictionModule
             )
         }
 

@@ -2,6 +2,7 @@ package com.engineerfred.reclaim.feature.settings.data
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOne
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.engineerfred.reclaim.core.data.local.DatabaseProvider
 import com.engineerfred.reclaim.core.data.mapper.toDomain
 import com.engineerfred.reclaim.core.data.mapper.toEntity
@@ -24,8 +25,8 @@ class SettingsRepositoryImpl(
     override fun observePreferences(userId: String): Flow<NotificationPreferences> {
         return queries.selectPrefsForUser(userId)
             .asFlow()
-            .mapToOne(Dispatchers.IO)
-            .map { it.toDomain() }
+            .mapToOneOrNull(Dispatchers.IO)          // ← was mapToOne
+            .map { it?.toDomain() ?: NotificationPreferences(userId = userId) }
     }
 
     override suspend fun savePreferences(preferences: NotificationPreferences): ReclaimResult<Unit> =

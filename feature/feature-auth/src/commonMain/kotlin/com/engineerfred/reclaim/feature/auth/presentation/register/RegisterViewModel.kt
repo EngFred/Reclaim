@@ -69,16 +69,56 @@ class RegisterViewModel(
     // ── Private ───────────────────────────────────────────────────────────────
 
     private suspend fun handleRegisterError(exception: Throwable) {
-        val message = exception.message ?: "Something went wrong. Please try again."
+        val raw = exception.message?.lowercase() ?: ""
+
         when {
-            message.contains("email", ignoreCase = true) ->
-                _uiState.update { it.copy(emailError = message) }
-            message.contains("match", ignoreCase = true) ->
-                _uiState.update { it.copy(confirmPasswordError = message) }
-            message.contains("password", ignoreCase = true) ->
-                _uiState.update { it.copy(passwordError = message) }
+            // ── Field-level errors from RegisterUseCase (already friendly) ───
+            raw.contains("please enter your email") ||
+                    raw.contains("valid email") ->
+                _uiState.update { it.copy(emailError = exception.message) }
+
+            raw.contains("please choose a password") ||
+                    raw.contains("at least 6") ->
+                _uiState.update { it.copy(passwordError = exception.message) }
+
+            raw.contains("don't match") ->
+                _uiState.update { it.copy(confirmPasswordError = exception.message) }
+
+            // ── Firebase: email already in use ────────────────────────────────
+            raw.contains("email-already-in-use") ||
+                    raw.contains("already in use") ||
+                    raw.contains("already registered") ->
+                _uiState.update {
+                    it.copy(emailError = "An account already exists with this email. Try signing in instead.")
+                }
+
+            // ── Firebase: invalid email format ────────────────────────────────
+            raw.contains("invalid-email") ||
+                    raw.contains("badly formatted") ->
+                _uiState.update {
+                    it.copy(emailError = "That doesn't look like a valid email address.")
+                }
+
+            // ── Firebase: weak password ───────────────────────────────────────
+            raw.contains("weak-password") ||
+                    raw.contains("password should be") ->
+                _uiState.update {
+                    it.copy(passwordError = "Password must be at least 6 characters long.")
+                }
+
+            // ── Firebase: network error ───────────────────────────────────────
+            raw.contains("network") ||
+                    raw.contains("unable to resolve") ||
+                    raw.contains("timeout") ->
+                _uiState.update {
+                    it.copy(generalError = "No internet connection. Please check your network and try again.")
+                }
+
+            // ── Catch-all ─────────────────────────────────────────────────────
             else ->
-                _uiState.update { it.copy(generalError = message) }
+                _uiState.update {
+                    it.copy(generalError = "Something went wrong. Please try again.")
+                }
         }
     }
 }

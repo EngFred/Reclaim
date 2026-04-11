@@ -7,8 +7,11 @@ import com.engineerfred.reclaim.core.domain.util.ReclaimResult
 /**
  * Authenticates an existing user with email and password.
  *
- * Validates input before touching the repository so the data layer
- * never receives blank credentials.
+ * Only validates that fields are non-blank and email is well-formed.
+ * We deliberately do NOT enforce password length here — the user
+ * already set their password at registration time. Enforcing length
+ * on login would lock out users whose passwords were set under a
+ * different policy.
  */
 class LoginUseCase(private val repository: AuthRepository) {
 
@@ -20,16 +23,13 @@ class LoginUseCase(private val repository: AuthRepository) {
         val trimmedPassword = password.trim()
 
         if (trimmedEmail.isBlank()) {
-            return ReclaimResult.Failure(IllegalArgumentException("Email cannot be empty."))
+            return ReclaimResult.Failure(IllegalArgumentException("Please enter your email address."))
         }
         if (!trimmedEmail.contains('@')) {
-            return ReclaimResult.Failure(IllegalArgumentException("Enter a valid email address."))
+            return ReclaimResult.Failure(IllegalArgumentException("That doesn't look like a valid email address."))
         }
         if (trimmedPassword.isBlank()) {
-            return ReclaimResult.Failure(IllegalArgumentException("Password cannot be empty."))
-        }
-        if (trimmedPassword.length < 6) {
-            return ReclaimResult.Failure(IllegalArgumentException("Password must be at least 6 characters."))
+            return ReclaimResult.Failure(IllegalArgumentException("Please enter your password."))
         }
 
         return repository.login(trimmedEmail, trimmedPassword)

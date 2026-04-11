@@ -62,19 +62,67 @@ class LoginViewModel(
         viewModelScope.launch { _events.send(LoginEvent.NavigateToRegister) }
     }
 
+//    fun onForgotPasswordClicked() {
+//        viewModelScope.launch { _events.send(LoginEvent.NavigateToForgotPassword) }
+//    }
+
     // ── Private ───────────────────────────────────────────────────────────────
 
+    /**
+     * Maps raw Firebase / use-case exceptions to friendly, non-technical
+     * messages routed to the appropriate UI field.
+     *
+     * Firebase error codes arrive embedded in the exception message.
+     * We match on known fragments and fall back to a generic message.
+     */
     private suspend fun handleLoginError(exception: Throwable) {
-        val message = exception.message ?: "Something went wrong. Please try again."
-        // Validation errors from LoginUseCase are routed to the relevant field.
-        // Firebase errors (wrong password, user not found, etc.) go to generalError.
+        val raw = exception.message?.lowercase() ?: ""
+
         when {
-            message.contains("email", ignoreCase = true) ->
-                _uiState.update { it.copy(emailError = message) }
-            message.contains("password", ignoreCase = true) ->
-                _uiState.update { it.copy(passwordError = message) }
+            // ── Field-level errors from LoginUseCase (already friendly) ──────
+            raw.contains("please enter your email") ||
+                    raw.contains("valid email") ->
+                _uiState.update { it.copy(emailError = exception.message) }
+
+            raw.contains("please enter your password") ->
+                _uiState.update { it.copy(passwordError = exception.message) }
+
+            // ── Firebase: no account with this email ─────────────────────────
+            raw.contains("no user record") ||
+                    raw.contains("user-not-found") ||
+                    raw.contains("there is no user") ->
+                _uiState.update {
+                    it.copy(emailError = "No account found with this email address.")
+                }
+
+            // ── Firebase: wrong password ──────────────────────────────────────
+            raw.contains("password is invalid") ||
+                    raw.contains("wrong-password") ||
+                    raw.contains("invalid credential") ->
+                _uiState.update {
+                    it.copy(passwordError = "Incorrect password. Please try again.")
+                }
+
+            // ── Firebase: too many attempts ───────────────────────────────────
+            raw.contains("too-many-requests") ||
+                    raw.contains("too many") ->
+                _uiState.update {
+                    it.copy(generalError = "Too many failed attempts. Please wait a moment and try again.")
+                }
+
+            // ── Firebase: network error ───────────────────────────────────────
+            raw.contains("network") ||
+                    raw.contains("unable to resolve") ||
+                    raw.contains("timeout") ->
+                _uiState.update {
+                    it.copy(generalError = "No internet connection. Please check your network and try again.")
+                }
+
+            // ── Catch-all ─────────────────────────────────────────────────────
             else ->
-                _uiState.update { it.copy(generalError = message) }
+                _uiState.update {
+                    it.copy(generalError = "Something went wrong. Please try again.")
+                }
         }
     }
 }

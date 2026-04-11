@@ -10,6 +10,7 @@ kotlin {
             implementation(project(":core:core-domain"))
             implementation(project(":core:core-ui"))
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.material.icons.extended)
         }
     }
 }

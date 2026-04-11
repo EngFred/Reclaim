@@ -6,6 +6,7 @@ import com.engineerfred.reclaim.feature.dashboard.domain.usecase.GetAllActiveAdd
 import com.engineerfred.reclaim.feature.dashboard.domain.usecase.GetStreakForAddictionUseCase
 import com.engineerfred.reclaim.feature.dashboard.domain.usecase.GetTodayGreetingUseCase
 import com.engineerfred.reclaim.feature.dashboard.presentation.DashboardViewModel
+import com.engineerfred.reclaim.feature.dashboard.presentation.pick.PickAddictionViewModel
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -23,4 +24,5 @@ val dashboardModule = module {
 
     // ViewModel
     viewModelOf(::DashboardViewModel)
+    viewModelOf(::PickAddictionViewModel)
 }

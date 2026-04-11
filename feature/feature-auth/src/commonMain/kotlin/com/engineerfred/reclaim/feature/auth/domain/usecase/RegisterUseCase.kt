@@ -9,6 +9,7 @@ import com.engineerfred.reclaim.core.domain.util.ReclaimResult
  *
  * Validates that email is well-formed, password meets the minimum length,
  * and confirmation matches — before any network call is made.
+ * All messages are user-friendly, not technical.
  */
 class RegisterUseCase(private val repository: AuthRepository) {
 
@@ -21,19 +22,19 @@ class RegisterUseCase(private val repository: AuthRepository) {
         val trimmedPassword = password.trim()
 
         if (trimmedEmail.isBlank()) {
-            return ReclaimResult.Failure(IllegalArgumentException("Email cannot be empty."))
+            return ReclaimResult.Failure(IllegalArgumentException("Please enter your email address."))
         }
         if (!trimmedEmail.contains('@')) {
-            return ReclaimResult.Failure(IllegalArgumentException("Enter a valid email address."))
+            return ReclaimResult.Failure(IllegalArgumentException("That doesn't look like a valid email address."))
         }
         if (trimmedPassword.isBlank()) {
-            return ReclaimResult.Failure(IllegalArgumentException("Password cannot be empty."))
+            return ReclaimResult.Failure(IllegalArgumentException("Please choose a password."))
         }
         if (trimmedPassword.length < 6) {
-            return ReclaimResult.Failure(IllegalArgumentException("Password must be at least 6 characters."))
+            return ReclaimResult.Failure(IllegalArgumentException("Password must be at least 6 characters long."))
         }
         if (trimmedPassword != confirmPassword.trim()) {
-            return ReclaimResult.Failure(IllegalArgumentException("Passwords do not match."))
+            return ReclaimResult.Failure(IllegalArgumentException("Passwords don't match. Please try again."))
         }
 
         return repository.register(trimmedEmail, trimmedPassword)

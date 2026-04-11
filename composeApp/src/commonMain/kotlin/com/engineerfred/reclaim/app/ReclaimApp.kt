@@ -1,5 +1,7 @@
 package com.engineerfred.reclaim.app
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -10,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -29,6 +32,7 @@ import com.engineerfred.reclaim.feature.auth.presentation.register.RegisterScree
 import com.engineerfred.reclaim.feature.auth.presentation.splash.SplashScreen
 import com.engineerfred.reclaim.feature.checkin.presentation.CheckInScreen
 import com.engineerfred.reclaim.feature.dashboard.presentation.DashboardScreen
+import com.engineerfred.reclaim.feature.dashboard.presentation.pick.PickAddictionScreen
 import com.engineerfred.reclaim.feature.progress.presentation.ProgressScreen
 import com.engineerfred.reclaim.feature.settings.presentation.SettingsScreen
 import com.engineerfred.reclaim.feature.sos.presentation.SosScreen
@@ -40,7 +44,6 @@ fun ReclaimApp() {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
-        // Only show bottom nav on main app screens
         val showBottomNav = currentRoute in listOf(
             BottomNavItem.Dashboard.route,
             BottomNavItem.Progress.route,
@@ -60,18 +63,18 @@ fun ReclaimApp() {
                 if (showBottomNav) {
                     NavigationBar(
                         containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.onSurface
+                        contentColor   = MaterialTheme.colorScheme.onSurface
                     ) {
                         bottomNavItems.forEach { item ->
                             val isSelected = currentRoute?.startsWith(item.route) == true
                             NavigationBarItem(
-                                icon = { Icon(item.icon, contentDescription = item.title) },
-                                label = { Text(item.title) },
+                                icon     = { Icon(item.icon, contentDescription = item.title) },
+                                label    = { Text(item.title) },
                                 selected = isSelected,
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                colors   = NavigationBarItemDefaults.colors(
+                                    selectedIconColor   = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    selectedTextColor   = MaterialTheme.colorScheme.primary,
+                                    indicatorColor      = MaterialTheme.colorScheme.primaryContainer,
                                     unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                     unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 ),
@@ -82,7 +85,7 @@ fun ReclaimApp() {
                                                 saveState = true
                                             }
                                             launchSingleTop = true
-                                            restoreState = true
+                                            restoreState    = true
                                         }
                                     }
                                 }
@@ -93,11 +96,12 @@ fun ReclaimApp() {
             }
         ) { innerPadding ->
             NavHost(
-                navController = navController,
+                navController    = navController,
                 startDestination = ReclaimRoutes.SPLASH,
-                modifier = Modifier.padding(innerPadding)
+                modifier         = Modifier.padding(innerPadding)
             ) {
-                // ── Auth & Onboarding ─────────────────────────────────────────
+
+                // ── Auth ──────────────────────────────────────────────────────
                 composable(ReclaimRoutes.SPLASH) {
                     SplashScreen(
                         onNavigate = { route, clear ->
@@ -125,7 +129,9 @@ fun ReclaimApp() {
                         }
                     )
                 }
-                composable(ReclaimRoutes.WELCOME) { // Represents the entire onboarding flow
+
+                // ── Onboarding ────────────────────────────────────────────────
+                composable(ReclaimRoutes.WELCOME) {
                     OnboardingFlowScreen(
                         onNavigateToDashboard = {
                             navController.navigate(ReclaimRoutes.DASHBOARD) {
@@ -135,63 +141,81 @@ fun ReclaimApp() {
                     )
                 }
 
-                // ── Dashboard & Addictions ────────────────────────────────────
+                // ── Dashboard ─────────────────────────────────────────────────
                 composable(ReclaimRoutes.DASHBOARD) {
                     DashboardScreen(
                         onNavigate = { route -> navController.navigate(route) }
                     )
                 }
+
+                // ── Addiction ─────────────────────────────────────────────────
                 composable(ReclaimRoutes.ADD_ADDICTION) {
                     AddAddictionScreen(
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
                 composable(
-                    route = ReclaimRoutes.ADDICTION_DETAIL_TEMPLATE,
+                    route     = ReclaimRoutes.ADDICTION_DETAIL_TEMPLATE,
                     arguments = listOf(navArgument("addictionId") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val id = backStackEntry.arguments?.getString("addictionId") ?: return@composable
+                ) { entry ->
+                    val id = entry.arguments?.getString("addictionId") ?: return@composable
                     AddictionDetailScreen(
-                        addictionId = id,
+                        addictionId    = id,
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
 
                 // ── Check-In ──────────────────────────────────────────────────
                 composable(
-                    route = ReclaimRoutes.CHECK_IN_TEMPLATE,
+                    route     = ReclaimRoutes.CHECK_IN_TEMPLATE,
                     arguments = listOf(navArgument("addictionId") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val id = backStackEntry.arguments?.getString("addictionId") ?: return@composable
+                ) { entry ->
+                    val id = entry.arguments?.getString("addictionId") ?: return@composable
                     CheckInScreen(
-                        addictionId = id,
+                        addictionId    = id,
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
 
-                // ── Progress & SOS (Base routing for Bottom Nav) ──────────────
-                // Note: In a fully fleshed out app, clicking Progress/SOS from the bottom nav
-                // would open a screen listing all active addictions to choose from.
-                // For simplicity here, we assume navigation to these screens happens directly
-                // via the Dashboard card which passes the explicit ID.
+                // ── Progress ──────────────────────────────────────────────────
+                // ── Progress ──────────────────────────────────────────────────────────
+                composable(BottomNavItem.Progress.route) {
+                    PickAddictionScreen(
+                        title    = "Progress",
+                        subtitle = "Select a journey to view its progress.",
+                        onAddictionSelected = { addictionId ->
+                            navController.navigate(ReclaimRoutes.progressDetail(addictionId))
+                        }
+                    )
+                }
                 composable(
-                    route = ReclaimRoutes.PROGRESS_DETAIL_TEMPLATE,
+                    route     = ReclaimRoutes.PROGRESS_DETAIL_TEMPLATE,
                     arguments = listOf(navArgument("addictionId") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val id = backStackEntry.arguments?.getString("addictionId") ?: return@composable
+                ) { entry ->
+                    val id = entry.arguments?.getString("addictionId") ?: return@composable
                     ProgressScreen(
-                        addictionId = id,
+                        addictionId    = id,
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
 
+                // ── SOS ───────────────────────────────────────────────────────────────
+                composable(BottomNavItem.Sos.route) {
+                    PickAddictionScreen(
+                        title    = "SOS",
+                        subtitle = "Select a journey to get support.",
+                        onAddictionSelected = { addictionId ->
+                            navController.navigate("sos/$addictionId")
+                        }
+                    )
+                }
                 composable(
-                    route = "sos/{addictionId}",
+                    route     = "sos/{addictionId}",
                     arguments = listOf(navArgument("addictionId") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val id = backStackEntry.arguments?.getString("addictionId") ?: return@composable
+                ) { entry ->
+                    val id = entry.arguments?.getString("addictionId") ?: return@composable
                     SosScreen(
-                        addictionId = id,
+                        addictionId    = id,
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
@@ -199,7 +223,7 @@ fun ReclaimApp() {
                 // ── Settings ──────────────────────────────────────────────────
                 composable(ReclaimRoutes.SETTINGS) {
                     SettingsScreen(
-                        onNavigateToNotifications = { /* Wire to a NotificationPrefs screen if built */ },
+                        onNavigateToNotifications = { },
                         onNavigateToLogin = {
                             navController.navigate(ReclaimRoutes.LOGIN) {
                                 popUpTo(0) { inclusive = true }
