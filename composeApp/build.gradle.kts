@@ -19,7 +19,8 @@ kotlin {
             implementation(project(":feature:feature-sos"))
             implementation(project(":feature:feature-settings"))
             implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.navigation.compose) // KMP Navigation
+            implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.navigation.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.material.icons.extended)
         }

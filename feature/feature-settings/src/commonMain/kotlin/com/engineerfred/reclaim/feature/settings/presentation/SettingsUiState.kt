@@ -6,5 +6,6 @@ data class SettingsUiState(
     val preferences: NotificationPreferences? = null,
     val isLoading: Boolean = true,
     val isDeletingAccount: Boolean = false,
+    val isDarkTheme: Boolean = false,
     val error: String? = null
 )

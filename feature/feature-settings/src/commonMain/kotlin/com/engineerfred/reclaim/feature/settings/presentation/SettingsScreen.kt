@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Notifications
@@ -34,6 +35,7 @@ fun SettingsScreen(
                 SettingsEvent.NavigateToNotificationPrefs -> onNavigateToNotifications()
                 SettingsEvent.NavigateToLogin -> onNavigateToLogin()
                 is SettingsEvent.ShowToast -> { /* Handle Snackbar */ }
+                else -> {}
             }
         }
     }
@@ -55,11 +57,40 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             SettingsGroup(title = "Preferences") {
+                // ── Theme toggle ──────────────────────────────────────────────
+                Surface {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Spacing.screen, vertical = Spacing.lg),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DarkMode,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.width(Spacing.lg))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Dark Mode", style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                text = if (uiState.isDarkTheme) "On" else "Off",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = uiState.isDarkTheme,
+                            onCheckedChange = viewModel::onToggleDarkTheme
+                        )
+                    }
+                }
+                // ── Notifications ─────────────────────────────────────────────
                 SettingsItem(
-                    title = "Notifications",
+                    title    = "Notifications",
                     subtitle = "Morning reminders, alerts, and milestones",
-                    icon = Icons.Default.Notifications,
-                    onClick = onNavigateToNotifications
+                    icon     = Icons.Default.Notifications,
+                    onClick  = onNavigateToNotifications
                 )
             }
 

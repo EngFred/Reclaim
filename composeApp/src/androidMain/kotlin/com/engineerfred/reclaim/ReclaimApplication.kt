@@ -1,6 +1,7 @@
 package com.engineerfred.reclaim
 
 import android.app.Application
+import com.engineerfred.reclaim.app.di.appModule
 import com.engineerfred.reclaim.core.data.di.coreDataModule
 import com.engineerfred.reclaim.core.data.di.platformDataModule
 import com.engineerfred.reclaim.core.data.remote.FirebaseInitializer
@@ -33,6 +34,7 @@ class ReclaimApplication : Application(), KoinComponent {
                 coreDataModule,
                 platformDataModule,
                 coreNotificationsModule,
+                appModule,
                 authModule,
                 onboardingModule,
                 dashboardModule,
